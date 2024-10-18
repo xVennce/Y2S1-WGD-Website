@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width-device-width, initial-scale=1.0">
+        <Title>Project</Title>
+        <!--linking style css-->
+        <link rel="stylesheet" href="style.css">
+    </head>
+
+    <body>
+<!--------------Top UI-------------->        
+        <div id="header">
+            <div class ="container">
+                <nav>
+                    <img src="images/Diamond.webp" class="logo">
+                    <ul>
+                        <li><a href="HomePage.html">Home page</a></li>
+                        <li><a href="LoginPage.html">Login page</a></li>
+                        <li><a href="GamePage.html">Game page</a></li>
+                    </ul>    
+                </nav>
+<!--------------Top UI-------------->
+
+<!--------------Title-------------->
+
+                <div class="header-text">
+                    <p>This is the game file page</p>
+                    <h1>Game <span>page</span></h1>
+
+                    <p id="demo">Click me (event test)</p>
+                   
+                </div>
+            </div>
+        </div>        
+<!--------------Title-------------->
+
+<!--------------Scripts-------------->
+
+        <script src="script.js"></script>
+        <script async src="https://unpkg.com/es-module-shims@1.8.0/dist/es-module-shims.js">    </script>
+        <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.169.0/build/three.module.js"}}</script>
+        <script type="module" src="ThreeSample.js"></script>
+        
+<!--------------Scripts-------------->
+    </body>
+</html>
