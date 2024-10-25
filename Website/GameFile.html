@@ -11,7 +11,7 @@
 
     <body>
 <!--------------Top UI-------------->        
-        <div id="header">
+        <div>
             <div class ="container">
                 <nav>
                     <img src="images/Diamond.webp" class="logo">
@@ -22,25 +22,30 @@
                     </ul>    
                 </nav>
 <!--------------Top UI-------------->
-
-<!--------------Title-------------->
-
-                <div class="header-text">
-                    <p>This is the game file page</p>
-                    <h1>Game <span>page</span></h1>
-
-                    <p id="demo">Click me (event test)</p>
-                   
-                </div>
             </div>
         </div>        
-<!--------------Title-------------->
+
+<!--------------UI Overlay-------------->
+        <div class="overlay-text">
+            <h3><p>Zoom out to see the pano sphere</p></h3>
+            <button id="stopBtn">Stop</button>
+            <button id="startBtn">Start</button>
+            <button id="leftBtn">Left</button>
+            <button id="rightBtn">Right</button>
+            <div id="chickenState">Chicken Position</div>
+            <div id="obsState">Obstacles Postion</div>
+        </div>
+<!--------------UI Overlay-------------->
 
 <!--------------Scripts-------------->
 
-        <script src="script.js"></script>
+
         <script async src="https://unpkg.com/es-module-shims@1.8.0/dist/es-module-shims.js">    </script>
-        <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.169.0/build/three.module.js"}}</script>
+        <script type="importmap">{"imports":{
+            "three":"https://unpkg.com/three@0.169.0/build/three.module.js",
+            "three/addons/":"https://unpkg.com/three@0.169.0/examples/jsm/"
+            }
+        }</script>
         <script type="module" src="ThreeSample.js"></script>
         
 <!--------------Scripts-------------->
