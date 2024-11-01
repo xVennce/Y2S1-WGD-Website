@@ -11,6 +11,7 @@ const loader = new GLTFLoader();
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
+
 /*Creating box geometry*/
 const geometry = new THREE.BoxGeometry( .1, .1, .1 );
 /*Creating basic material*/
@@ -20,8 +21,11 @@ const cube = new THREE.Mesh( geometry, material );
 scene.add( cube );
 
 //Creating skybox
-const geometrySB = new THREE.BoxGeometry( 100, 100, 100 );
-const materialSB = new THREE.MeshBasicMaterial( { color:  0x6930c3, side: THREE.DoubleSide} );
+const geometrySB = new THREE.SphereGeometry( 100, 100, 100 );
+const materialSB = new THREE.MeshBasicMaterial({ 
+	map: new THREE.TextureLoader().load('../resources/images/skybox.jpg'), 
+	side: THREE.DoubleSide
+});
 const cubeSB = new THREE.Mesh( geometrySB, materialSB );
 scene.add( cube, cubeSB );
 
@@ -93,10 +97,17 @@ const animate=function() {
 	if (insertPressed){
 		scene.add(mesh);
 	}
-	console.log(renderer);
 	cube.rotation.x += 0.01;
 	cube.rotation.y += 0.01;
 	renderer.render( scene, camera );
 }
+
+const onWindowResize = () => {
+	camera.aspect=window.innerWidth / window.innerHeight;
+	camera.updateProjectionMatrix();
+	renderer.setSize(window.innerWidth,window.innerHeight);
+}
+
+window.addEventListener('resize', onWindowResize);
 
 renderer.setAnimationLoop(animate);

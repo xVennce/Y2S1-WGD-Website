@@ -44,7 +44,7 @@ function keyUpHandler(event){
     if (event.keyCode === 46){
         deletePressed = false;
     }
-    if (event.keyCode === 46){
+    if (event.keyCode === 45){
         insertPressed = false;
     }
 }
