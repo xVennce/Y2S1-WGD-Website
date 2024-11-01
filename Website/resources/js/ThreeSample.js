@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
@@ -17,12 +18,12 @@ const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
 const cube = new THREE.Mesh( geometry, material );
 scene.add( cube );
 
+//Creating skybox
 const geometrySB = new THREE.BoxGeometry( 100, 100, 100 );
-/*Creating basic material*/
 const materialSB = new THREE.MeshBasicMaterial( { color:  0x6930c3, side: THREE.DoubleSide} );
-/*Creating mesh*/
 const cubeSB = new THREE.Mesh( geometrySB, materialSB );
 scene.add( cube, cubeSB );
+//setting cube x pos
 cube.position.x = (0);
 
 camera.position.z = 5;
