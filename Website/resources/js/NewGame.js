@@ -9,7 +9,10 @@ const camera = new THREE.PerspectiveCamera(
     1000
 )
 
-const renderer = new THREE.WebGLRenderer()
+const renderer = new THREE.WebGLRenderer({
+    alpha: true,
+    antialias: true
+})
 renderer.shadowMap.enabled = true
 renderer.setSize(window.innerWidth, window.innerHeight)
 document.body.append(renderer.domElement)
@@ -24,6 +27,9 @@ const onWindowResize = () => {
 	renderer.setSize(window.innerWidth,window.innerHeight);
 }
 
+window.addEventListener('resize', onWindowResize);
+
+camera.position.set(4.61, 2.74, 8)
 
 //creating class for new meshes
 class Box extends THREE.Mesh{
@@ -42,7 +48,8 @@ class Box extends THREE.Mesh{
             y: 0,
             z: 0
         },
-        zAcceleration = false
+        zAcceleration = false,
+        isGrounded = true
     }){
         super(
             //instancing geometry
@@ -58,6 +65,8 @@ class Box extends THREE.Mesh{
         this.position.set(position.x, position.y, position.z)
 
         this.zAcceleration = zAcceleration
+
+        this.isGrounded = isGrounded
 
         //this gives an initial values of the position
         this.updateSides()
@@ -106,11 +115,14 @@ class Box extends THREE.Mesh{
                 box2: ground
             })
         ) {
-            this.velocity.y *= 0.8
+            const friction = 0.5
+            this.velocity.y *= friction
             this.velocity.y = -this.velocity.y
+            this.isGrounded = true
         }
         else{
             this.position.y += this.velocity.y
+            this.isGrounded = false
         }
     }
 }
@@ -138,10 +150,10 @@ cube.castShadow = true
 scene.add(cube)
 
 const ground = new Box({
-    width: 5,
+    width: 10,
     height: 0.5,
-    depth: 10,
-    color: '#0000ff',
+    depth: 50,
+    color: '#86c5da',
     position: {
         x: 0,
         y: -2,
@@ -155,11 +167,13 @@ scene.add(ground)
 //creating lighting and adding it to the scene
 const light = new THREE.DirectionalLight(0xffffff, 1)
 light.position.y = 3
-light.position.z = 2
+light.position.z = 1
 light.castShadow = true
 scene.add(light)
 
-camera.position.z = 5
+scene.add(new THREE.AmbientLight(0xffffff, 0.5))
+
+
 
 console.log("cube bottom = " + cube.bottom)
 console.log("ground top = " + ground.top)
@@ -198,6 +212,10 @@ window.addEventListener('keydown', (event) => {
             console.log('Pressed s')
             keys.s.pressed = true
             break
+        case'Space':
+            console.log('Pressed Space')
+            if (cube.isGrounded) cube.velocity.y = 0.1
+            break
     }
 })
 
@@ -224,9 +242,13 @@ window.addEventListener('keyup', (event) => {
 
 const enemies = []
 
+//this set of code is for deltaTime
+let msPrev = window.performance.now()
+const desiredFPS = 60
+const msPerFrame = 1000 / desiredFPS
+
 //this tracks framerate
 let frames = 0
-
 let spawnRate = 200
 
 function animate(){
@@ -251,9 +273,21 @@ function animate(){
                 box1: cube,
                 box2: enemy,
         })) {
+            //this needs to change for the ui
+            //this currently freezes the game on the frame of which the
+            //collision occurs
             cancelAnimationFrame(animationID)
         }
     })
+
+    
+    //delta time code
+    const msNow = window.performance.now()
+    const msPassed = msNow - msPrev
+
+    if (msPassed < msPerFrame) return
+    const excessTime = msPassed % msPerFrame
+    msPrev = msNow - excessTime
 
 
     if (frames % spawnRate === 0) {
@@ -261,7 +295,6 @@ function animate(){
         //caps out at 1 enemy every 20 frames
 
         if (spawnRate > 20) spawnRate -= 20
-
         const enemy = new Box({
             width: 1,
             height: 1,
@@ -269,9 +302,9 @@ function animate(){
             color: '#ff0000',
         
             position: {
-                x: (Math.random() - 0.5) * 5,
+                x: (Math.random() - 0.5) * 10,
                 y: 0,
-                z: -4
+                z: -25
             },
             velocity: {
                 x: 0,
@@ -287,8 +320,9 @@ function animate(){
     }
 
     frames++
+
 }
-
-
-
+setInterval(() => {
+    console.log(frames)
+  }, 1000)
 animate()
