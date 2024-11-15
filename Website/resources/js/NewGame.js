@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+//need to figure out why this doesnt work
+//import { keys } from './InputHandler.js';
 
 const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(
@@ -49,7 +51,7 @@ class Box extends THREE.Mesh{
             z: 0
         },
         zAcceleration = false,
-        isGrounded = true
+        isGrounded = true,
     }){
         super(
             //instancing geometry
@@ -90,11 +92,11 @@ class Box extends THREE.Mesh{
         this.front = this.position.z + this.depth / 2
         this.back = this.position.z - this.depth / 2
     }
-
     update(ground){
 
         this.updateSides()
 
+        //this is for the enemy gradual speed up
         if (this.zAcceleration = true) this.velocity.z += 0.0001
 
 
@@ -108,13 +110,15 @@ class Box extends THREE.Mesh{
         //value of gravity
         this.velocity.y += this.gravity
 
+        const groundCollision = boxCollisionXYZ({ box1: this, box2: ground })
+        const groundCollisionX = boxCollisionX ({ box1: this, box2: ground })
+        const groundCollisionY = boxCollisionY ({ box1: this, box2: ground })
+
         //collision for the box when in contact with ground
-        if (
-            boxCollision({
-                box1: this,
-                box2: ground
-            })
-        ) {
+        //currently only works for when the cube is in contact with the top of the ground
+
+        if (groundCollision) {
+            //this handles the bouncing of the box
             const friction = 0.5
             this.velocity.y *= friction
             this.velocity.y = -this.velocity.y
@@ -124,15 +128,29 @@ class Box extends THREE.Mesh{
             this.position.y += this.velocity.y
             this.isGrounded = false
         }
+
+        //NEED TO FIX LEFT AND RIGHT COLLISION STOP
+        // if (groundCollisionX && !groundCollisionY) {
+        //     //this.position.y += this.velocity.y
+        // }
+        
     }
 }
 
-function boxCollision({box1, box2}) {
-        const xCollision = box1.right >= box2.left && box1.left <= box2.right
-        const yCollision = box1.top >= box2.bottom && box1.bottom + box1.velocity.y<= box2.top
-        const zCollision = box1.front >= box2.back && box1.back <= box2.front
-        
-        return xCollision && yCollision && zCollision
+function boxCollisionY({box1, box2}) {
+    const yCollision = box1.top >= box2.bottom && box1.bottom + box1.velocity.y<= box2.top
+    return yCollision
+}
+function boxCollisionX({box1, box2}) {
+    const xCollision = box1.right >= box2.left && box1.left <= box2.right
+    return xCollision
+}
+function boxCollisionZ({box1, box2}) {
+    const zCollision = box1.front >= box2.back && box1.back <= box2.front
+    return zCollision
+}
+function boxCollisionXYZ({box1, box2}) {
+    return boxCollisionX({box1: box1, box2: box2,}) && boxCollisionY({box1: box1, box2: box2,}) && boxCollisionZ({box1: box1, box2: box2,})
 }
 
 const cube = new Box({
@@ -160,7 +178,6 @@ const ground = new Box({
         z: 0,
     }
 })
-
 ground.receiveShadow = true
 scene.add(ground)
 
@@ -173,10 +190,6 @@ scene.add(light)
 
 scene.add(new THREE.AmbientLight(0xffffff, 0.5))
 
-
-
-console.log("cube bottom = " + cube.bottom)
-console.log("ground top = " + ground.top)
 
 //going to move keystrokes into its own js file
 const keys = {
@@ -191,55 +204,53 @@ const keys = {
     },
     s: {
         pressed: false
+    },
+    space:{
+        pressed: false
     }
 }
 
-window.addEventListener('keydown', (event) => {
+document.addEventListener('keydown', (event) => {
     switch(event.code){
         case'KeyA':
-            console.log('Pressed a')
             keys.a.pressed = true
             break
         case'KeyD':
-            console.log('Pressed d')
             keys.d.pressed = true
             break
         case'KeyW':
-            console.log('Pressed w')
             keys.w.pressed = true
             break
         case'KeyS':
-            console.log('Pressed s')
             keys.s.pressed = true
             break
         case'Space':
-            console.log('Pressed Space')
-            if (cube.isGrounded) cube.velocity.y = 0.1
+            keys.space.pressed = true
             break
     }
 })
 
-window.addEventListener('keyup', (event) => {
+document.addEventListener('keyup', (event) => {
     switch(event.code){
         case'KeyA':
-            console.log('Released a')
             keys.a.pressed = false
             break
         case'KeyD':
-            console.log('Released d')
             keys.d.pressed = false
             break
         case'KeyW':
-            console.log('Released w')
             keys.w.pressed = false
             break
         case'KeyS':
-            console.log('Released s')
             keys.s.pressed = false
+            break
+        case'Space':
+            keys.space.pressed = false
             break
     }
 })
 
+//array to hold all the enemies created
 const enemies = []
 
 //this set of code is for deltaTime
@@ -264,15 +275,13 @@ function animate(){
     if (keys.w.pressed) cube.velocity.z = -0.01
     else if (keys.s.pressed) cube.velocity.z = 0.01
     
-
+    if (keys.space.pressed && cube.isGrounded) cube.velocity.y = 0.1
+    
     cube.update(ground)
     enemies.forEach(enemy =>{
         enemy.update(ground)
         if (
-            boxCollision({
-                box1: cube,
-                box2: enemy,
-        })) {
+            boxCollisionXYZ({box1: cube, box2: enemy,})) {
             //this needs to change for the ui
             //this currently freezes the game on the frame of which the
             //collision occurs
