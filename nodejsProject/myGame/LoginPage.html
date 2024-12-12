@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width-device-width, initial-scale=1.0">
+        <Title>Project</Title>
+        <!--linking style css-->
+        <link rel="stylesheet" href="./resources/css/style.css">
+    </head>
+
+    <body>
+<!--------------Top UI-------------->        
+        <div id="header">
+            <div class ="container">
+                <nav>
+                    <img src="./resources/images/Diamond.webp" class="logo">
+                    <ul>
+                        <li><a href="HomePage.html">Home page</a></li>
+                        <li><a href="LoginPage.html">Login page</a></li>
+                        <li><a href="GamePage.html">Temp page</a></li>
+                        <li><a href="GameFileNew.html">Game page</a></li>
+                        <li><a href="GameFile.html">Mid-term game page</a></li>
+                        <li><a href="404.html">404 page</a></li>
+                    </ul>    
+                </nav>
+<!--------------Top UI-------------->
+
+<!--------------Title-------------->
+
+                <div class="header-text">
+                    <p>This is the login page</p>
+                    <h1>Login <span>page</span></h1>
+                </div>
+            </div>
+        </div>
+<!--------------Title-------------->
+
+<!--------------Login-------------->
+    <div id="sign-in">
+        <div class="container">
+            <div class="row">
+                <div class="sign-in-col-2">
+                    <h1 class="sub-title">Register here!</h1>
+                    <p>If you already have an account, press "Already registered?".</p>
+                    <br>
+                    <p>You will be redirected to the game page once you have signed in.</p>
+                    <div class="tab-titles">
+                        <p class="tab-links active-link" onclick="opentab('signup')">Register</p>
+                        <p class="tab-links" onclick="opentab('login')">Already registered?</p>
+                    </div>
+                    <div class="tab-contents active-tab" id="signup">
+                        <ul>
+                            <li><span>First name:</span></li>
+                            <input type="text" id="fname">
+                            <li><span>Last name</span></li>
+                            <input type="text" id="lname">
+                            <li><span>Username</span></li>
+                            <input type="text" id="uname">
+                            <li><span>Password</span></li>
+                            <input type="text" id="pword">
+                            <div class="btn">
+                                <input type="submit" value="Register!">
+                            </div>
+                        </ul>
+                        
+                    </div>
+                    <div class="tab-contents" id="login">
+                        <ul>
+                            <li><span>Username</span></li>
+                            <input type="text" id="uname">
+                            <li><span>Password</span></li>
+                            <input type="text" id="pword">
+                            <div class="btn"></div>
+                                <input type="submit" value="Login!">
+                            </div>
+                            </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--------------Login-------------->
+
+    <script src="./resources/js/tab-content-switch.js"></script>
+    </body>
+</html>
