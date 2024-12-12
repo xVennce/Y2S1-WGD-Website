@@ -11,6 +11,9 @@ var con = mysql.createConnection({
   database: "cmp5360"
 });
 
+//setting up static folder
+app.use(express.static(__dirname + "/static"));
+
 con.connect(function(err) {
   if (err) throw err;
   console.log("Connected!");
@@ -20,18 +23,21 @@ con.connect(function(err) {
   });
 });
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
+//this is the route for the main page
+//this is the page that loads when you go to the website
+app.get('/index', (req, res, next) => {
+  res.sendFile(__dirname + '/static/HomePage.html')
+});
+
+//this is the route for the 404 page
+//this page should only appear when there is not a route for the url
+app.get('*', function(req, res){
+  //__dirname
+  console.log(__dirname);
+  res.status(404).sendFile(__dirname + '/static/404.html')
 })
-
-app.get('/some', (req, res) => {
-    res.send('Change a word!')
-  })
-
-  app.get('/test', (req, res) => {
-    res.send('This is test page')
-  })
-
+  
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
-})
+});
+
