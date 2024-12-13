@@ -1,12 +1,37 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { upPressed, downPressed, leftPressed, rightPressed, deletePressed, insertPressed } from './InputCheck.js';
+import { upPressed, downPressed, leftPressed, rightPressed, deletePressed, insertPressed} from './InputCheck.js';
+import Stats from 'Stats';
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 const renderer = new THREE.WebGLRenderer();
 const loader = new GLTFLoader();
+
+const listener = new THREE.AudioListener();
+camera.add(listener)
+const audioLoader = new THREE.AudioLoader();
+const backgroundMusic = new THREE.Audio(listener);
+audioLoader.load("../resources/sounds/BGM.mp3", function (buffer){
+	backgroundMusic.setBuffer(buffer);
+	backgroundMusic.setLoop(true);
+	backgroundMusic.setVolume(.25);
+});
+
+const startAudio = () => {
+    if (listener.context.state === 'suspended') {
+      listener.context.resume();
+    }
+    backgroundMusic.play(); // Play the music
+    document.removeEventListener('click', startAudio);
+};
+
+document.addEventListener('click', startAudio);
+
+let stats;
+stats = new Stats();
+document.body.appendChild( stats.dom );
 
 renderer.setSize( window.innerWidth, window.innerHeight - 100);
 document.body.appendChild( renderer.domElement );
@@ -99,6 +124,7 @@ const animate=function() {
 	if (insertPressed){
 		scene.add(mesh);
 	}
+	stats.update();
 	cube.rotation.x += 0.01;
 	cube.rotation.y += 0.01;
 	renderer.render( scene, camera );

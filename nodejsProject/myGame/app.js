@@ -35,13 +35,13 @@ function registerUser(email, username, password, res) {
   bcrypt.hash(password, saltRounds, (err, hashedPassword) => {
     if (err) {
       console.error('Error hashing the password:', err);
-      return res.status(500).send('Registration failed due to hashing.');
+      return res.status(404).send('Registration failed due to hashing.');
     }
     const query = 'INSERT INTO userpass (Email, Username, Password) VALUES (?, ?, ?)';
     con.query(query, [email, username, hashedPassword], (err, results) => {
       if (err) {
         console.error('Error inserting user:', err);
-        return res.status(500).send('Registration failed due to error during insertation.');
+        return res.status(404).send('Registration failed due to error during insertation.');
       }
       console.log('User registered successfully:', results);
       res.redirect('/loginPage?msg=Registration successful!'); // Set message in query
@@ -55,23 +55,23 @@ function loginUser(emailOrUsername, password, res) {
   con.query(query, [emailOrUsername, emailOrUsername], (err, results) => {
     if (err) {
       console.error('Error fetching user:', err);
-      return res.status(500).send('Login failed due to fetching error.');
+      return res.status(404).send('Login failed due to fetching error.');
     }
     if (results.length > 0) {
       const user = results[0];
       bcrypt.compare(password, user.Password, (err, isMatch) => {
         if (err) {
           console.error('Error comparing passwords:', err);
-          return res.status(500).send('Login failed due to wrong password.');
+          return res.status(404).send('Login failed due to wrong password.');
         }
         if (isMatch) {
           console.log('Login successful:', user);
           return res.redirect('/game');
         }
-        res.status(401).send('Invalid email/username or password.');
+        res.status(404).send('Invalid email/username or password.');
       });
     } else {
-      res.status(401).send('Invalid email/username or password.');
+      res.status(404).send('Invalid email/username or password.');
     }
   });
 }
