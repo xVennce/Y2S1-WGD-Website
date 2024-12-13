@@ -16,7 +16,7 @@ const backgroundMusic = new THREE.Audio(listener);
 audioLoader.load("../resources/sounds/BGM.mp3", function (buffer){
 	backgroundMusic.setBuffer(buffer);
 	backgroundMusic.setLoop(true);
-	backgroundMusic.setVolume(.25);
+	backgroundMusic.setVolume(1);
 });
 
 const startAudio = () => {
