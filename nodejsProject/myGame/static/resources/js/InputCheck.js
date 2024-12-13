@@ -8,6 +8,13 @@ let downPressed = false;
 let deletePressed = false;
 let insertPressed = false;
 
+
+const rightBtn = document.getElementById('rightBtn')
+const leftBtn = document.getElementById('leftBtn')
+const upBtn = document.getElementById('upBtn')
+const downBtn = document.getElementById('downBtn')
+
+
 function keyDownHandler(event){
 	if (event.keyCode === 68){
 		rightPressed = true;
@@ -48,4 +55,39 @@ function keyUpHandler(event){
         insertPressed = false;
     }
 }
+
+upBtn.addEventListener("mousedown", (e) => {
+	e.preventDefault();
+	upPressed = true;
+})
+upBtn.addEventListener("mouseup", (e) => {
+	e.preventDefault();
+	upPressed = false;
+})
+downBtn.addEventListener("mousedown", (e) => {
+	e.preventDefault();
+	downPressed = true;
+})
+downBtn.addEventListener("mouseup", (e) => {
+	e.preventDefault();
+	downPressed = false;
+})
+leftBtn.addEventListener("mousedown", (e) => {
+	e.preventDefault();
+	leftPressed = true;
+})
+leftBtn.addEventListener("mouseup", (e) => {
+	e.preventDefault();
+	leftPressed = false;
+})
+
+rightBtn.addEventListener("mousedown", (e) => {
+	e.preventDefault();
+	rightPressed = true;
+});
+rightBtn.addEventListener("mouseup", (e) => {
+	e.preventDefault();
+	rightPressed = false;
+});
+
 export { upPressed, downPressed, leftPressed, rightPressed, deletePressed, insertPressed }

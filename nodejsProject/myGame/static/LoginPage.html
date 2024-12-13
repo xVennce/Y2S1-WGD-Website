@@ -16,12 +16,10 @@
                 <nav>
                     <img src="./resources/images/Diamond.webp" class="logo">
                     <ul>
-                        <li><a href="HomePage.html">Home page</a></li>
-                        <li><a href="LoginPage.html">Login page</a></li>
-                        <li><a href="GamePage.html">Temp page</a></li>
-                        <li><a href="GameFileNew.html">Game page</a></li>
-                        <li><a href="GameFile.html">Mid-term game page</a></li>
-                        <li><a href="404.html">404 page</a></li>
+                        <li><a href="/index">Home page</a></li>
+                        <li><a href="/loginPage">Login page</a></li>
+                        <li><a href="/game">Game page</a></li>
+                        <li><a href="/404">404 page</a></li>    
                     </ul>    
                 </nav>
 <!--------------Top UI-------------->
@@ -51,30 +49,30 @@
                     </div>
                     <div class="tab-contents active-tab" id="signup">
                         <ul>
-                            <li><span>First name:</span></li>
-                            <input type="text" id="fname">
-                            <li><span>Last name</span></li>
-                            <input type="text" id="lname">
-                            <li><span>Username</span></li>
-                            <input type="text" id="uname">
-                            <li><span>Password</span></li>
-                            <input type="text" id="pword">
-                            <div class="btn">
-                                <input type="submit" value="Register!">
-                            </div>
+                            <form name="register-form"action="/register" method="POST">
+                                <li><span>Email</span></li>
+                                <input type="email" id="email" name="email" required><br>
+                                <li><span>Username</span></li>
+                                <input type="text" id="username" name="username" required><br>
+                                <li><span>Password</span></li>
+                                <input type="password" id="password" name="password" required><br><br>
+                                <button type="submit">Register!</button><br>
+                                <span id="msg"></span>
+                            </form>
                         </ul>
-                        
                     </div>
                     <div class="tab-contents" id="login">
                         <ul>
-                            <li><span>Username</span></li>
-                            <input type="text" id="uname">
-                            <li><span>Password</span></li>
-                            <input type="text" id="pword">
-                            <div class="btn"></div>
-                                <input type="submit" value="Login!">
-                            </div>
-                            </ul>
+                            <form name="login-form"action="/login" method="POST">
+                                <li><span>Username or Email</span></li>
+                                <input type="text" id="emailOrUsername" name="emailOrUsername" required><br>
+                                <li><span>Password</span></li>
+                                <input type="password" id="loginPassword" name="password" required><br><br>
+                                <button type="submit">Login!</button><br>
+                                <span id="msg"></span>
+                            </form>
+                            
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -83,5 +81,6 @@
 <!--------------Login-------------->
 
     <script src="./resources/js/tab-content-switch.js"></script>
+    <script src="./resources/js/MsgUpdate.js"></script>
     </body>
 </html>

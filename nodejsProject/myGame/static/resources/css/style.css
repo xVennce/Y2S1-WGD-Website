@@ -143,6 +143,16 @@ nav ul li a:hover::after{
 .btn{
     padding-top: 15px;
 }
+
+/*-----------login/registration success-----------*/
+#msg{
+    color: #61b752;
+    margin-top: -40px;
+    display: block;
+}
+/*-----------login/registration success-----------*/
+
+
 /*-----------about-----------*/
 
 
@@ -155,7 +165,7 @@ nav ul li a:hover::after{
     transform: translate(-50%,-50%);
     color: #fff;
 }
-#stopBtn, #startBtn, #leftBtn, #rightBtn{
+#upBtn, #downBtn, #leftBtn, #rightBtn{
     background-color: #6930c3;
     border: none;
     color: white;
@@ -166,4 +176,5 @@ nav ul li a:hover::after{
     font-size: 16px;
 }
 /*-----------UI Overlay-----------*/
+
 
