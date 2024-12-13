@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { upPressed, downPressed, leftPressed, rightPressed, deletePressed, insertPressed} from './InputCheck.js';
+import { upPressed, downPressed, leftPressed, rightPressed, deletePressed, insertPressed, scorePressed} from './InputCheck.js';
 import Stats from 'Stats';
 
 const scene = new THREE.Scene();
@@ -28,6 +28,27 @@ const startAudio = () => {
 };
 
 document.addEventListener('click', startAudio);
+
+//timer
+let timeDuration = 60;
+let timeText = document.getElementById("time");
+const timer = setInterval(function(){
+	timeDuration--;
+	timeText.innerHTML = timeDuration;
+	if (timeDuration === 0){
+		location.reload();
+		clearInterval(timer);
+	}
+}, 1000);
+
+//score handler
+let totalScore = 0;
+let scoreText = document.getElementById("playerScore");
+function scoreUpdate(amount){
+	totalScore += amount;
+	scoreText.innerHTML = totalScore;
+}
+
 
 let stats;
 stats = new Stats();
@@ -124,7 +145,11 @@ const animate=function() {
 	if (insertPressed){
 		scene.add(mesh);
 	}
+	if (scorePressed){
+		scoreUpdate(100);
+	}
 	stats.update();
+	//scoreUpdate(1);
 	cube.rotation.x += 0.01;
 	cube.rotation.y += 0.01;
 	renderer.render( scene, camera );

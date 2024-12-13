@@ -6,12 +6,14 @@ let leftPressed = false;
 let upPressed = false;
 let downPressed = false;
 let deletePressed = false;
-let insertPressed = false
+let insertPressed = false;
+let scorePressed = false;
 
 const rightBtn = document.getElementById('rightBtn')
 const leftBtn = document.getElementById('leftBtn')
 const upBtn = document.getElementById('upBtn')
 const downBtn = document.getElementById('downBtn')
+const scoreBtn = document.getElementById('scoreBtn')
 
 function keyDownHandler(event){
 	if (event.keyCode === 68){
@@ -88,5 +90,14 @@ rightBtn.addEventListener("mouseup", (e) => {
 	rightPressed = false;
 });
 
+scoreBtn.addEventListener("mousedown", (e) => {
+	e.preventDefault();
+	scorePressed = true;
+});
+scoreBtn.addEventListener("mouseup", (e) => {
+	e.preventDefault();
+	scorePressed = false;
+});
 
-export { upPressed, downPressed, leftPressed, rightPressed, deletePressed, insertPressed}
+
+export { upPressed, downPressed, leftPressed, rightPressed, deletePressed, insertPressed, scorePressed}

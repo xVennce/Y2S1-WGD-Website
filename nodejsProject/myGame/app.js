@@ -110,7 +110,7 @@ app.post('/login', (req, res) => {
 
 //this is the route for the 404 page
 //this page should only appear when there is not a route for the url
-app.get('*', function(req, res){
+app.use(function(req, res){
   //__dirname
   console.log(__dirname);
   res.status(404).sendFile(__dirname + '/static/404.html')

@@ -165,7 +165,8 @@ nav ul li a:hover::after{
     transform: translate(-50%,-50%);
     color: #fff;
 }
-#upBtn, #downBtn, #leftBtn, #rightBtn{
+
+#upBtn, #downBtn, #leftBtn, #rightBtn, #scoreBtn{
     background-color: #6930c3;
     border: none;
     color: white;
@@ -175,6 +176,7 @@ nav ul li a:hover::after{
     display: inline-block;
     font-size: 16px;
 }
+
 /*-----------UI Overlay-----------*/
 
 
