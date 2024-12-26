@@ -30,15 +30,16 @@ con.connect(function(err) {
 });
 
 //this function should add the user to the database
-function registerUser(email, username, password, res) {
+function registerUser(username, password, res) {
   const saltRounds = 10;
+  const score = 0;
   bcrypt.hash(password, saltRounds, (err, hashedPassword) => {
     if (err) {
       console.error('Error hashing the password:', err);
       return res.status(404).send('Registration failed due to hashing.');
     }
-    const query = 'INSERT INTO userpass (Email, Username, Password) VALUES (?, ?, ?)';
-    con.query(query, [email, username, hashedPassword], (err, results) => {
+    const query = 'INSERT INTO userinfo (Username, Password, Score) VALUES (?, ?, ?)';
+    con.query(query, [username, hashedPassword, score], (err, results) => {
       if (err) {
         console.error('Error inserting user:', err);
         return res.status(404).send('Registration failed due to error during insertation.');
@@ -98,8 +99,8 @@ app.get('/404', (req, res, next) => {
 
 //this listens for this post to inact the register user function
 app.post('/register', (req, res) => {
-  const { email, username, password } = req.body;
-  registerUser(email, username, password, res);
+  const { username, password } = req.body;
+  registerUser(username, password, res);
 });
 
 //this listens for this post to inact the login user function
