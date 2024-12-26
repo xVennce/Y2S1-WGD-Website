@@ -72,7 +72,7 @@ function registerUser(username, password, res) {
             });
           }
           console.log('User registered successfully:', results);
-          res.redirect('/loginPage?msg=Registration successful!'); // Set message in query
+          res.redirect('/loginPage?msg=Registration successful!');
         });
       }
     });
