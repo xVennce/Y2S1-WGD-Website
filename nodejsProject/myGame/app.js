@@ -4,6 +4,8 @@ const port = 3000;
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const notifier = require('node-notifier');
+const fs = require('fs/promises');
+const path = require('path');
 
 var mysql = require('mysql');
 
@@ -16,6 +18,8 @@ var con = mysql.createConnection({
 
 //setting up static folder
 app.use(express.static(__dirname + "/static"));
+//setting up secure folder
+
 //setting up body parser
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -30,6 +34,7 @@ con.connect(function(err) {
 });
 
 //this function should add the user to the database
+//on error, it sends a desktop notif
 function registerUser(username, password, res) {
   const saltRounds = 10;
   const score = 0;
@@ -77,9 +82,10 @@ function registerUser(username, password, res) {
       }
     });
   });
-}
+};
 
 //this function should check for the login details
+//on error, it sends a desktop notif
 function loginUser(username, password, res) {
   const query = 'SELECT * FROM userinfo WHERE Username = ?';
   con.query(query, [username], (err, results) => {
@@ -122,12 +128,48 @@ function loginUser(username, password, res) {
       });
     };
   });
-}
+};
+
+//these functions need to be async as to allow for the code to be temp paused
+//whilst it writes to the database
+
+//This function will input the user information into the .json file to be held as a form of session control
+async function loggingUserIntoJSON(username){
+  const [rows] = await con.execute('SELECT * FROM userinfo WHERE username = ?', [username]);
+  if (rows.length === 0) {
+    console.log("No user found.");
+  };
+  await fs.writeFile(out)
+};
+
+async function updatingUserInJSON(score){
+
+};
+
+//This function will clear the .json file of all user information
+async function clearingUserDataInJSON(){
+  try{
+    const secureFolder = path.resolve(__dirname, 'secure');
+    const filePath = path.join(secureFolder, '/json/userdata.json');
+    //this try block is used to check if folder exists
+    try{
+      await fs.access(secureFolder);
+    } catch (err) {
+      console.error(`Error accessing secure folder (${secureFolder}): ${err.message}`);
+      return;
+    };
+    await fs.writeFile(filePath, '');
+    console.log('Cleared userdata.json successfully.');
+  } catch{
+    console.error('Error whilst clearing JSON.');
+  };
+};
 
 //this is the route for the main page
 //this is the page that loads when you go to the website
 app.get('/index', (req, res, next) => {
   res.sendFile(__dirname + '/static/HomePage.html')
+  clearingUserDataInJSON();
 });
 
 //this is the route for the login page
