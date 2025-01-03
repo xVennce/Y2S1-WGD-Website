@@ -110,7 +110,7 @@ function loginUser(username, password, res) {
         };
         if (isMatch) {
           console.log('Login successful:', USER);
-          loggingUserIntoJSON('xVennce');
+          loggingUserIntoJSON(username);
           return res.redirect('/game');
         };
         //this occurs when there is a matching username but incorrect password
