@@ -152,18 +152,67 @@ nav ul li a:hover::after{
 }
 /*-----------login/registration success-----------*/
 
-
-/*-----------about-----------*/
-
-
-
-/*-----------UI Overlay-----------*/
-.overlay-text{
+/*-----------play button-----------*/
+.play-button{
+    display: none;
     position: absolute;
     top: 35%;
     left: 20%;
     transform: translate(-50%,-50%);
     color: #fff;
+}
+
+#playGameButton{
+    background-color: #6930c3;
+    border: none;
+    color: white;
+    padding: 5px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+/*-----------play button-----------*/
+
+/*-----------Progress Bar-----------*/
+.progress-bar-container {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.75);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+#progress-bar {
+    width: 30%;
+    margin-top: 0.5%;
+    height: 2%;
+}
+label {
+    color: white;
+    font-size: 2rem;
+}
+
+
+/*-----------Progress Bar-----------*/
+
+/*-----------UI Overlay-----------*/
+.overlay-text{
+    display: none;
+    position: absolute;
+    top: 35%;
+    left: 20%;
+    transform: translate(-50%,-50%);
+    color: #fff;
+}
+#time, #playerScore, #controls, #UIText{
+    font-size: 16px;
 }
 
 #upBtn, #downBtn, #leftBtn, #rightBtn, #scoreBtn{

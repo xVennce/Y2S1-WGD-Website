@@ -4,42 +4,68 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { upPressed, downPressed, leftPressed, rightPressed, deletePressed, insertPressed, scorePressed} from './InputCheck.js';
 import Stats from 'Stats';
 
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-const renderer = new THREE.WebGLRenderer();
-const loader = new GLTFLoader();
+const LOADINGMANAGER = new THREE.LoadingManager();
 
-const listener = new THREE.AudioListener();
-camera.add(listener)
-const audioLoader = new THREE.AudioLoader();
-const backgroundMusic = new THREE.Audio(listener);
-audioLoader.load("../resources/sounds/BGM.mp3", function (buffer){
-	backgroundMusic.setBuffer(buffer);
-	backgroundMusic.setLoop(true);
-	backgroundMusic.setVolume(1);
-});
+const PROGRESSBAR = document.getElementById('progress-bar'); 
+const PROGRESSBARCONTAINER = document.querySelector('.progress-bar-container');
 
-const startAudio = () => {
-    if (listener.context.state === 'suspended') {
-      listener.context.resume();
-    }
-    backgroundMusic.play(); // Play the music
-    document.removeEventListener('click', startAudio);
+const USERINTERFACE = document.querySelector('.overlay-text');
+
+LOADINGMANAGER.onStart = function(url, item, total){
+	console.log(`Started loading: ${url}`);
+};
+LOADINGMANAGER.onProgress = function(url, loaded, total){
+	PROGRESSBAR.value = (loaded / total) * 100;
 };
 
-document.addEventListener('click', startAudio);
+LOADINGMANAGER.onLoad = function(){
+	PROGRESSBARCONTAINER.style.display = 'none';
+	USERINTERFACE.style.display = 'block';
+};
+
+const SCENE = new THREE.Scene();
+const CAMERA = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+const RENDERER = new THREE.WebGLRenderer();
+const GLTFLOADER = new GLTFLoader(LOADINGMANAGER);
+
+const AUDIOLISTENER = new THREE.AudioListener();
+const AUDIOLOADER = new THREE.AudioLoader();
+const BACKGROUNDMUSIC = new THREE.Audio(AUDIOLISTENER);
+
+var timerStarted = false
+
+CAMERA.add(AUDIOLISTENER);
+AUDIOLOADER.load("../resources/sounds/BGM.mp3", function (buffer){
+	BACKGROUNDMUSIC.setBuffer(buffer);
+	BACKGROUNDMUSIC.setLoop(true);
+	BACKGROUNDMUSIC.setVolume(1);
+});
+
+const STARTAUDIO = () => {
+    if (AUDIOLISTENER.context.state === 'suspended') {
+      AUDIOLISTENER.context.resume();
+    }
+    BACKGROUNDMUSIC.play(); // Play the music
+    document.removeEventListener('click', STARTAUDIO);
+};
+
+document.addEventListener('click', STARTAUDIO);
 
 //timer
-let timeDuration = 60;
-let timeText = document.getElementById("time");
-const timer = setInterval(function(){
-	timeDuration--;
-	timeText.innerHTML = timeDuration;
-	if (timeDuration === 0){
-		location.reload();
-		clearInterval(timer);
-	}
-}, 1000);
+function startTimer(){
+	let timeDuration = 60;
+	let timeText = document.getElementById("time");
+
+	const TIMER = setInterval(function(){
+		timeDuration--;
+		timeText.innerHTML = timeDuration;
+		if (timeDuration === 0){
+			//this just reloads the game
+			location.reload();
+			clearInterval(TIMER);
+		}
+	}, 1000);
+}
 
 //score handler
 let totalScore = 0;
@@ -49,13 +75,31 @@ function scoreUpdate(amount){
 	scoreText.innerHTML = totalScore;
 }
 
+//highscore update
+//Need to add this to the game end condition
+//this function will send the score to the backend so that it can compare it
+async function submitScoreToBackend(){
+	const TEMP = document.getElementById("playerScore");
+	const CURRENTSCORE = parseInt(TEMP.innerHTML);
+	try {
+		const RESPONSE = await fetch ('http://localhost:3000/compareUserScore', {
+			method: 'POST',
+			headers:{
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({PLAYERSCORE: CURRENTSCORE}),
+		});
+	} catch (err){
+		console.error('Error occured when trying to pass the data to the backend', err);
+	}
+};
 
 let stats;
 stats = new Stats();
 document.body.appendChild( stats.dom );
 
-renderer.setSize( window.innerWidth, window.innerHeight - 100);
-document.body.appendChild( renderer.domElement );
+RENDERER.setSize( window.innerWidth, window.innerHeight - 100);
+document.body.appendChild( RENDERER.domElement );
 
 
 /*Creating box geometry*/
@@ -64,7 +108,7 @@ const geometry = new THREE.BoxGeometry( .1, .1, .1 );
 const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
 /*Creating mesh*/
 const cube = new THREE.Mesh( geometry, material );
-scene.add( cube );
+SCENE.add( cube );
 
 //Creating skybox
 const geometrySB = new THREE.SphereGeometry( 100, 100, 100 );
@@ -73,11 +117,11 @@ const materialSB = new THREE.MeshBasicMaterial({
 	side: THREE.DoubleSide
 });
 const cubeSB = new THREE.Mesh( geometrySB, materialSB );
-scene.add( cube, cubeSB );
+SCENE.add( cube, cubeSB );
 
 //Creating white directional light from top
 const directionalLight = new THREE.AmbientLight(0x404040);
-scene.add(directionalLight);
+SCENE.add(directionalLight);
 
 //setting cube x pos
 cube.position.x = (0);
@@ -87,13 +131,13 @@ cube.position.x = (0);
 
 let mesh;
 
-loader.load(
+GLTFLOADER.load(
 	'../resources/3DModels/helicopter.glb',
 	(gltf) => {
 		mesh = gltf.scene;
 		mesh.scale.set(0.3, 0.3, 0.3);
 		//adds GLTF to the scene
-		scene.add(mesh);
+		SCENE.add(mesh);
 	},
 	//called when loading is in progress
 	(xhr) => {
@@ -107,11 +151,11 @@ loader.load(
 
 
 //Controls
-camera.position.z = 5;
+CAMERA.position.z = 5;
 
 let controls;
 const createControls = () =>{
-    controls = new OrbitControls(camera, renderer.domElement);
+    controls = new OrbitControls(CAMERA, RENDERER.domElement);
 };
 createControls();
 controls.enableDamping=true;
@@ -125,6 +169,12 @@ const speed = 0.01;
 //applying movement
 const animate=function() {
 	
+	//this is for the timer
+	if (!timerStarted){
+		timerStarted=true;
+		startTimer();
+	}
+
 	if (rightPressed) {
         mesh.position.x += speed;
     }
@@ -138,12 +188,12 @@ const animate=function() {
         mesh.position.y -= speed;
     }
 	if (deletePressed){
-		scene.remove(mesh);
+		SCENE.remove(mesh);
 		geometry.dispose();
 		material.dispose();
 	}
 	if (insertPressed){
-		scene.add(mesh);
+		SCENE.add(mesh);
 	}
 	if (scorePressed){
 		scoreUpdate(100);
@@ -152,15 +202,15 @@ const animate=function() {
 	//scoreUpdate(1);
 	cube.rotation.x += 0.01;
 	cube.rotation.y += 0.01;
-	renderer.render( scene, camera );
+	RENDERER.render( SCENE, CAMERA );
 }
 
 const onWindowResize = () => {
-	camera.aspect=window.innerWidth / window.innerHeight;
-	camera.updateProjectionMatrix();
-	renderer.setSize(window.innerWidth,window.innerHeight - 100);
+	CAMERA.aspect=window.innerWidth / window.innerHeight;
+	CAMERA.updateProjectionMatrix();
+	RENDERER.setSize(window.innerWidth,window.innerHeight - 100);
 }
 
 window.addEventListener('resize', onWindowResize);
 
-renderer.setAnimationLoop(animate);
+RENDERER.setAnimationLoop(animate);

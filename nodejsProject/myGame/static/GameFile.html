@@ -11,38 +11,54 @@
 
     <body>
 <!--------------Top UI-------------->        
-        <div>
-            <div class ="container">
-                <nav>
-                    <img src="./resources/images/Diamond.webp" class="logo">
-                    <ul>
-                        <li><a href="/index">Home page</a></li>
-                        <li><a href="/loginPage">Login page</a></li>
-                        <li><a href="/game">Game page</a></li>
-                        <li><a href="/404">404 page</a></li>
-                    </ul>    
-                </nav>
+        <div class ="container">
+            <nav>
+                <img src="./resources/images/Diamond.webp" class="logo">
+                <ul>
+                    <li><a href="/index">Home page</a></li>
+                    <li><a href="/loginPage">Login page</a></li>
+                    <li><a href="/game">Game page</a></li>
+                    <li><a href="/404">404 page</a></li>
+                </ul>    
+            </nav>
+        </div>     
 <!--------------Top UI-------------->
-            </div>
-        </div>        
 
+<!--------------Play button-------------->
+        <div class="play-button">
+            <button id="playGameButton">Press to Play!</button>
+        </div>
+<!--------------Play button-------------->
+
+<!--------------Loading UI-------------->
+        <div class="progress-bar-container">
+            <label for="progress-bar">Loading...</label>
+            <progress id="progress-bar" value="0" max="100"></progress>
+        </div>
+<!--------------Loading UI-------------->
+        
 <!--------------UI Overlay-------------->
-<div class="overlay-text">
-    <h3>Time remaining :  <label id="time"></label>s</h3>
-    <h3>score :  <label id="playerScore">0</label></h3>
-    <h3><p>Controls</p></h3>
-    <button id="upBtn">Up</button>
-    <button id="downBtn">Down</button>
-    <button id="leftBtn">Left</button>
-    <button id="rightBtn">Right</button>
-    <button id="scoreBtn">Increase score</button>
-</div>
+        <div class="overlay-text">
+            <h3 id = UIText>Time remaining :  
+                <label id="time">60</label>s
+            </h3>
+            <h3 id = UIText>score :  
+                <label id="playerScore">0</label>
+            </h3>
+            <h3 id = UIText>
+                Controls
+            </h3>
+            <button id="upBtn">Up</button>
+            <button id="downBtn">Down</button>
+            <button id="leftBtn">Left</button>
+            <button id="rightBtn">Right</button>
+            <button id="scoreBtn">Increase score</button>
+        </div>
 <!--------------UI Overlay-------------->
 
 <!--------------Scripts-------------->
 
-
-        <script async src="https://unpkg.com/es-module-shims@1.8.0/dist/es-module-shims.js">    </script>
+        <script async src="https://unpkg.com/es-module-shims@1.8.0/dist/es-module-shims.js"></script>
         <script type="importmap">{"imports":{
             "three":"https://unpkg.com/three@0.169.0/build/three.module.js",
             "three/addons/":"https://unpkg.com/three@0.169.0/examples/jsm/",
@@ -50,7 +66,7 @@
             }
         }</script>
         <script type="module" src="./resources/js/ThreeSampleTemp.js"></script>
-        
+            
 <!--------------Scripts-------------->
     </body>
 </html>
