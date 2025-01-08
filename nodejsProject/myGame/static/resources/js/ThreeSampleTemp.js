@@ -5,35 +5,32 @@ import { upPressed, downPressed, leftPressed, rightPressed, deletePressed, inser
 import Stats from 'Stats';
 
 const LOADINGMANAGER = new THREE.LoadingManager();
+const SCENE = new THREE.Scene();
+const CAMERA = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+const RENDERER = new THREE.WebGLRenderer();
+const GLTFLOADER = new GLTFLoader(LOADINGMANAGER);
+const AUDIOLISTENER = new THREE.AudioListener();
+const AUDIOLOADER = new THREE.AudioLoader();
+const BACKGROUNDMUSIC = new THREE.Audio(AUDIOLISTENER);
+const CLOCK = new THREE.Clock();
 
 const PROGRESSBAR = document.getElementById('progress-bar'); 
+const PLAYGAMEBUTTON = document.getElementById('playGameButton'); 
 const PROGRESSBARCONTAINER = document.querySelector('.progress-bar-container');
-
+const PLAYGAMEBUTTONCONTAINER = document.querySelector('.play-button');
 const USERINTERFACE = document.querySelector('.overlay-text');
 
-LOADINGMANAGER.onStart = function(url, item, total){
-	console.log(`Started loading: ${url}`);
-};
+var timerStarted = false
+
 LOADINGMANAGER.onProgress = function(url, loaded, total){
 	PROGRESSBAR.value = (loaded / total) * 100;
 };
 
 LOADINGMANAGER.onLoad = function(){
 	PROGRESSBARCONTAINER.style.display = 'none';
-	USERINTERFACE.style.display = 'block';
 };
 
-const SCENE = new THREE.Scene();
-const CAMERA = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-const RENDERER = new THREE.WebGLRenderer();
-const GLTFLOADER = new GLTFLoader(LOADINGMANAGER);
-
-const AUDIOLISTENER = new THREE.AudioListener();
-const AUDIOLOADER = new THREE.AudioLoader();
-const BACKGROUNDMUSIC = new THREE.Audio(AUDIOLISTENER);
-
-var timerStarted = false
-
+//background audio
 CAMERA.add(AUDIOLISTENER);
 AUDIOLOADER.load("../resources/sounds/BGM.mp3", function (buffer){
 	BACKGROUNDMUSIC.setBuffer(buffer);
@@ -49,7 +46,6 @@ const STARTAUDIO = () => {
     document.removeEventListener('click', STARTAUDIO);
 };
 
-document.addEventListener('click', STARTAUDIO);
 
 //timer
 function startTimer(){
@@ -82,7 +78,7 @@ async function submitScoreToBackend(){
 	const TEMP = document.getElementById("playerScore");
 	const CURRENTSCORE = parseInt(TEMP.innerHTML);
 	try {
-		const RESPONSE = await fetch ('http://localhost:3000/compareUserScore', {
+		const RESPONSE = await fetch ('/compareUserScore', {
 			method: 'POST',
 			headers:{
 				'Content-Type': 'application/json',
@@ -98,8 +94,9 @@ let stats;
 stats = new Stats();
 document.body.appendChild( stats.dom );
 
-RENDERER.setSize( window.innerWidth, window.innerHeight - 100);
+RENDERER.setSize( window.innerWidth, window.innerHeight);
 document.body.appendChild( RENDERER.domElement );
+
 
 
 /*Creating box geometry*/
@@ -121,7 +118,9 @@ SCENE.add( cube, cubeSB );
 
 //Creating white directional light from top
 const directionalLight = new THREE.AmbientLight(0x404040);
+const hemisphereLight = new THREE.HemisphereLight( 0xddeeff, 0x202020, 0.8);
 SCENE.add(directionalLight);
+SCENE.add(hemisphereLight);
 
 //setting cube x pos
 cube.position.x = (0);
@@ -130,12 +129,42 @@ cube.position.x = (0);
 //Adding 3D model to scene
 
 let mesh;
+let heliMixer;
 
 GLTFLOADER.load(
-	'../resources/3DModels/helicopter.glb',
+	'../resources/3DModels/low_poly_helicopter.glb',
 	(gltf) => {
 		mesh = gltf.scene;
 		mesh.scale.set(0.3, 0.3, 0.3);
+		mesh.position.set(-5, 4, -5);
+		mesh.rotation.set(0, 90, 0.3);
+		//adds GLTF to the scene
+		SCENE.add(mesh);
+
+		//this is for playing the animation
+		heliMixer = new THREE.AnimationMixer(gltf.scene);
+		gltf.animations.forEach((clip) =>{
+			const animationAction = heliMixer.clipAction(clip);
+			animationAction.play();
+		});
+	},
+	//called when loading is in progress
+	(xhr) => {
+		console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+	},
+	//called when loading has errors
+	(error) => {
+		console.log('Error has occured!' + error);
+	}
+);
+
+GLTFLOADER.load(
+	'../resources/3DModels/Island.glb',
+	(gltf) => {
+		mesh = gltf.scene;
+		mesh.scale.set(.75, .75, .75);
+		mesh.position.set(0, 0, 0);
+		mesh.rotation.set(0, 0, 0);
 		//adds GLTF to the scene
 		SCENE.add(mesh);
 	},
@@ -149,26 +178,31 @@ GLTFLOADER.load(
 	}
 );
 
+//SETTING UP CANNON
+
+
+
+
+
+
 
 //Controls
-CAMERA.position.z = 5;
-
+CAMERA.position.z = 10;
+CAMERA.position.y = 5;
 let controls;
 const createControls = () =>{
     controls = new OrbitControls(CAMERA, RENDERER.domElement);
 };
 createControls();
-controls.enableDamping=true;
-controls.dampingFactor=0.05;
-controls.screenSpacePanning=false;
-
 const speed = 0.01;
 
-
-
-//applying movement
+//Game loop
 const animate=function() {
-	
+	var delta = CLOCK.getDelta()
+	if (heliMixer){
+		heliMixer.update(delta);
+	}
+
 	//this is for the timer
 	if (!timerStarted){
 		timerStarted=true;
@@ -187,19 +221,12 @@ const animate=function() {
     if (downPressed) {
         mesh.position.y -= speed;
     }
-	if (deletePressed){
-		SCENE.remove(mesh);
-		geometry.dispose();
-		material.dispose();
-	}
-	if (insertPressed){
-		SCENE.add(mesh);
-	}
 	if (scorePressed){
 		scoreUpdate(100);
+		console.log(mesh.position)
 	}
 	stats.update();
-	//scoreUpdate(1);
+
 	cube.rotation.x += 0.01;
 	cube.rotation.y += 0.01;
 	RENDERER.render( SCENE, CAMERA );
@@ -208,9 +235,14 @@ const animate=function() {
 const onWindowResize = () => {
 	CAMERA.aspect=window.innerWidth / window.innerHeight;
 	CAMERA.updateProjectionMatrix();
-	RENDERER.setSize(window.innerWidth,window.innerHeight - 100);
+	RENDERER.setSize(window.innerWidth,window.innerHeight);
 }
-
 window.addEventListener('resize', onWindowResize);
 
-RENDERER.setAnimationLoop(animate);
+//play game button
+PLAYGAMEBUTTON.addEventListener("click", () => {
+	STARTAUDIO();
+	RENDERER.setAnimationLoop(animate);
+	PLAYGAMEBUTTONCONTAINER.style.display = 'none';
+	USERINTERFACE.style.display = 'block';
+});

@@ -56,7 +56,6 @@ function registerUser(username, password, res) {
     const USERNAMECHECK = 'SELECT * FROM userinfo WHERE username = ?';
     con.query(USERNAMECHECK, [username], function (err, result) {
       if (err) {
-        userCheck = false;
         console.error('Error occured when checking for existing usernames.')
         return NOTIFIER.notify({
           title: 'Error',
@@ -64,7 +63,6 @@ function registerUser(username, password, res) {
         });
       }
       if (result.length > 0) {
-        userCheck = false;
         console.log('Error: Username already exists');
         return NOTIFIER.notify({
           title: 'Error',
