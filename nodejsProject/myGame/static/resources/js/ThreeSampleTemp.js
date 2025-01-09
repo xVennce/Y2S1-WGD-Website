@@ -39,6 +39,8 @@ const gltfLoader = new GLTFLoader(loadingManager);
 const audioListener = new THREE.AudioListener();
 const audioLoader = new THREE.AudioLoader();
 const backgroundMusic = new THREE.Audio(audioListener);
+const soundEffect = new THREE.Audio(audioListener);
+const gameOverSound = new THREE.Audio(audioListener);
 
 //CANNON js stuff
 let physicsWorld;
@@ -209,6 +211,7 @@ class CollectableSpawner{
 		if (distanceToPlayer < 1.75) {
 			if (!this.pointCheck) {
 				//this ensures it only occurs once
+				soundEffect.play();
 				scoreUpdate(1000);
 				this.pointCheck = true;
 			};
@@ -486,6 +489,18 @@ function initGraphicsWorld(){
         backgroundMusic.setVolume(1);
     });
 
+	audioLoader.load("../resources/sounds/ScoreUp.mp3", (buffer) => {
+        soundEffect.setBuffer(buffer);
+        soundEffect.setLoop(false);
+        soundEffect.setVolume(1);
+    });
+
+	audioLoader.load("../resources/sounds/GameEnd.mp3", (buffer) => {
+        gameOverSound.setBuffer(buffer);
+        gameOverSound.setLoop(false);
+        gameOverSound.setVolume(1);
+    });
+
     //This is for the loading screen
     loadingManager.onProgress = (url, loaded, total) => {
         progressBar.value = (loaded / total) * 100;
@@ -675,7 +690,7 @@ async function fetchUserData(){
         };
     } catch (err) {
         console.error('Something went wrong during data fetching:', err.message);
-    }
+    };
 };
 
 function unloadStatsUi(){
@@ -692,6 +707,8 @@ function loadStatsUi(){
 function gameOverHandler(gameState){
 	if (gameState === true){
 		userInterface.style.display = 'none';
+		backgroundMusic.pause();
+		gameOverSound.play();
 		gameOverScore.innerHTML = totalScore;
 		submitScoreToBackend();
 		//game over ui here

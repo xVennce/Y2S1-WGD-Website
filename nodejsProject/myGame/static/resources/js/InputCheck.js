@@ -7,13 +7,11 @@ let upPressed = false;
 let downPressed = false;
 let deletePressed = false;
 let insertPressed = false;
-let scorePressed = false;
 
 const rightBtn = document.getElementById('rightBtn')
 const leftBtn = document.getElementById('leftBtn')
 const upBtn = document.getElementById('upBtn')
 const downBtn = document.getElementById('downBtn')
-const scoreBtn = document.getElementById('scoreBtn')
 
 function keyDownHandler(event){
 	if (event.keyCode === 68){
