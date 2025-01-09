@@ -47,6 +47,7 @@ let physicsWorld;
 let groundBody;
 let cannonDebugger;
 
+
 //Logic for spawn intervals for hurtCubes and good cubes
 //time here is measured in ms
 

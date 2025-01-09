@@ -26,6 +26,7 @@ var con = mysql.createConnection({
 
 //setting up static folder
 APP.use(EXPRESS.static(__dirname + "/static"));
+
 //setting up body parser
 APP.use(BODYPARSER.json());
 APP.use(BODYPARSER.urlencoded({ extended: true }));
