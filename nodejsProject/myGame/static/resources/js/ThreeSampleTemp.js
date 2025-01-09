@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-//import * as Ammo from './ammo.js';
+import * as CANNON from 'cannon-es';
+import CannonDebugger from 'cannon-es-debugger';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { upPressed, downPressed, leftPressed, rightPressed, scorePressed } from './InputCheck.js';
@@ -25,20 +26,79 @@ const audioListener = new THREE.AudioListener();
 const audioLoader = new THREE.AudioLoader();
 const backgroundMusic = new THREE.Audio(audioListener);
 
+let physicsWorld;
+let groundBody;
 
+let cannonDebugger 
+
+start();
 
 function start() {
+	initPhysicsWorld();
+	initGraphicsWorld();
+	
+	cannonDebugger= new CannonDebugger(scene, physicsWorld)
 
+	createGround();
 
-    scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-	// Set camera position
-	camera.position.set(0, 5, 10);
+    addEventListener();
+};
 
-	renderer = new THREE.WebGLRenderer();
-    
+function update() {
+	//this handles the helicopter anims
+    const deltaTime = clock.getDelta();
+    if (heliMixer) {
+        heliMixer.update(deltaTime);
+    }
+
+	cannonDebugger.update();
+
+	//this starts the timer
+    if (!timerStarted) {
+        timerStarted = true;
+        startTimer();
+    }
+	
+    if (rightPressed) mesh.position.x += speed;
+    if (leftPressed) mesh.position.x -= speed;
+    if (upPressed) mesh.position.y += speed;
+    if (downPressed) mesh.position.y -= speed;
+    if (scorePressed) scoreUpdate(100);
+
+    stats.update();
+
+    renderer.render(scene, camera);
+	requestAnimationFrame(update);
+};
+
+function createGround(){
+	groundBody = new CANNON.Body({
+		type: CANNON.Body.STATIC,
+		shape: new CANNON.Plane(),
+	});
+	groundBody.quaternion.setFromEuler(-Math.PI/2,0,0)
+	physicsWorld.addBody(groundBody);
+};
+
+function initPhysicsWorld(){
+	physicsWorld = new CANNON.World({
+		gravity: new CANNON.Vec3(0, -9.82, 0),
+	});
+};
+
+function initGraphicsWorld(){
+	//setting up base three js scene
 	clock = new THREE.Clock();
 
+	scene = new THREE.Scene();
+	
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+	camera.position.set(0, 5, 10);// Set camera position
+
+	createLighting();
+
+	renderer = new THREE.WebGLRenderer({ antialias: true });
+	renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
@@ -64,14 +124,10 @@ function start() {
 
     // Create basic objects
     createSceneObjects();
-    createLighting();
     createControls(controls);
-
     load3DModels();
-
-    addEventListener();
-    
 };
+
 
 
 function addEventListener() {
@@ -179,30 +235,6 @@ function startTimer(){
 	}, 1000);
 }
 
-function update() {
-	//this handles the helicopter anims
-    const deltaTime = clock.getDelta();
-    if (heliMixer) {
-        heliMixer.update(deltaTime);
-    }
-
-	//this starts the timer
-    if (!timerStarted) {
-        timerStarted = true;
-        startTimer();
-    }
-
-    if (rightPressed) mesh.position.x += speed;
-    if (leftPressed) mesh.position.x -= speed;
-    if (upPressed) mesh.position.y += speed;
-    if (downPressed) mesh.position.y -= speed;
-    if (scorePressed) scoreUpdate(100);
-
-    stats.update();
-
-    renderer.render(scene, camera);
-	requestAnimationFrame(update);
-};
 
 //when the startGame button is pressed,
 //it will cause the update function to start
@@ -217,4 +249,3 @@ function onWindowResize() {
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 };
-start();

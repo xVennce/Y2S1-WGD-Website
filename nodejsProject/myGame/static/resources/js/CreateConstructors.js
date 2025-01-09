@@ -1,6 +1,7 @@
+import * as THREE from 'three';
 function createCube(scale, position, mass, color, quaternion){
     let newCube = new THREE.Mesh(
-        new THREE.BoxBufferGeometry(scale.x, scale.y, scale.z),
+        new THREE.BoxGeometry(scale.x, scale.y, scale.z),
         new THREE.MeshPhongMaterial({color: color})
     );
     newCube.position.set(position.x, position.y, position.z);
