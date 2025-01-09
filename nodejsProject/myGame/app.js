@@ -224,10 +224,32 @@ async function clearingUserDataInJSON(){
   };
 };
 
+//This function reads the json file and fowards the data
+async function readUserDataJSON(){
+  try {
+    const DATA = await FS.readFile(PATHTOJSON, 'utf8');
+    if (!DATA.trim()) {
+        return { message: "User data is blank." };
+    };
+    const USERDATA = JSON.parse(DATA);
+    if (USERDATA.Username && USERDATA.Score !== undefined) {
+        return {
+            username: USERDATA.Username,
+            score: USERDATA.Score
+        };
+    } else {
+        return { message: "User data is invalid." };
+    };
+  } catch (err) {
+      console.error('Error reading userdata.json:', err.message);
+      return { message: "Error reading user data." };
+  };
+};
+
 //this is the route for the main page
 //this is the page that loads when you go to the website
 APP.get('/index', (req, res, next) => {
-  res.sendFile(__dirname + '/static/HomePage.html');
+  res.sendFile(__dirname + '/static/index.html');
   clearingUserDataInJSON();
 });
 
@@ -260,6 +282,12 @@ APP.post('/login', (req, res) => {
 APP.post('/compareUserScore', (req, res) => {
   const { PLAYERSCORE } = req.body;
   comparingUserScores(PLAYERSCORE);
+});
+
+//this listens for this post to read the json file and send the data
+APP.get('/readJSON', async (req, res) => {
+  const USERDATA = await readUserDataJSON();
+  res.json(USERDATA);
 });
 
 //this is the route for the 404 page

@@ -12,9 +12,23 @@
     <body>
 <!--------------Play button-------------->
         <div class="play-button">
-            <button id="playGameButton">Press to Play!</button>
+            <button id="playGameBtn">Press to Play!</button>
+            <br>
+            <button id="viewStatsBtn">View Stats</button>
         </div>
 <!--------------Play button-------------->
+
+<!--------------Play button-------------->
+<div class="stats-page">
+    <h1>Stats</h1>
+    <p id="stats-username">Username: </p>
+    <p id="stats-highscore">Highscore: </p>
+    <br>
+    <button id="backBtn">back</button>
+</div>
+<!--------------Play button-------------->
+
+
 
 <!--------------Loading UI-------------->
         <div class="progress-bar-container">
@@ -38,9 +52,20 @@
             <button id="downBtn">Down</button>
             <button id="leftBtn">Left</button>
             <button id="rightBtn">Right</button>
-            <button id="scoreBtn">Increase score</button>
         </div>
 <!--------------UI Overlay-------------->
+
+<!--------------Gameover Overlay-------------->
+        <div class="game-end-ui">
+            <h1>Game Over</h1>
+            <p>Your Score: <span id="final-score">0</span></p>
+            <br>
+            <button id="replayBtn">Replay</button>
+            <br>
+            <button id="quitBtn">Back to home</button>
+        </div>
+<!--------------Gameover Overlay-------------->
+
 
 <!--------------Scripts-------------->
 

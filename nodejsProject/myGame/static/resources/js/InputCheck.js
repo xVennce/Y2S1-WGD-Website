@@ -56,48 +56,29 @@ function keyUpHandler(event){
     }
 }
 
-upBtn.addEventListener("mousedown", (e) => {
-	e.preventDefault();
-	upPressed = true;
-})
-upBtn.addEventListener("mouseup", (e) => {
-	e.preventDefault();
-	upPressed = false;
-})
-downBtn.addEventListener("mousedown", (e) => {
-	e.preventDefault();
-	downPressed = true;
-})
-downBtn.addEventListener("mouseup", (e) => {
-	e.preventDefault();
-	downPressed = false;
-})
-leftBtn.addEventListener("mousedown", (e) => {
-	e.preventDefault();
-	leftPressed = true;
-})
-leftBtn.addEventListener("mouseup", (e) => {
-	e.preventDefault();
-	leftPressed = false;
-})
-
-rightBtn.addEventListener("mousedown", (e) => {
-	e.preventDefault();
-	rightPressed = true;
-});
-rightBtn.addEventListener("mouseup", (e) => {
-	e.preventDefault();
-	rightPressed = false;
-});
-
-scoreBtn.addEventListener("mousedown", (e) => {
-	e.preventDefault();
-	scorePressed = true;
-});
-scoreBtn.addEventListener("mouseup", (e) => {
-	e.preventDefault();
-	scorePressed = false;
-});
+function addInputListeners(button, actionStart, actionEnd) {
+    button.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        actionStart();
+    });
+    button.addEventListener("mouseup", (e) => {
+        e.preventDefault();
+        actionEnd();
+    });
+    button.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        actionStart();
+    });
+    button.addEventListener("touchend", (e) => {
+        e.preventDefault();
+        actionEnd();
+    });
+}
 
 
-export { upPressed, downPressed, leftPressed, rightPressed, deletePressed, insertPressed, scorePressed}
+addInputListeners(upBtn, () => (upPressed = true), () => (upPressed = false));
+addInputListeners(downBtn, () => (downPressed = true), () => (downPressed = false));
+addInputListeners(leftBtn, () => (leftPressed = true), () => (leftPressed = false));
+addInputListeners(rightBtn, () => (rightPressed = true), () => (rightPressed = false));
+
+export { upPressed, downPressed, leftPressed, rightPressed}
